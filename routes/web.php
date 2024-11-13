@@ -127,6 +127,10 @@ Route::middleware('auth')->group(function () {
     //rutas para asientos contables:
     Route::get('asientos/create/{empresa_id}', [AsientoController::class, 'create'])->name('asientos.create');
     Route::post('asientos/store', [AsientoController::class, 'store'])->name('asientos.store');
+    Route::get('/detalles-balance-copia/{empresa_id}', [AsientoController::class, 'mostrarDetallesBalanceCopia'])->name('detalles_balance_copia.index');
+
+    Route::get('/libro-diario/{empresa_id}', [AsientoController::class, 'libroDiario'])->name('libro_diario.index');
+
 
 });
 

@@ -48,9 +48,16 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="descripcion" class="block text-gray-700 font-bold mb-2">Descripción</label>
+                            <textarea name="descripcion" class="form-control w-full border rounded px-3 py-2" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
                             <label for="fecha" class="block text-gray-700 font-bold mb-2">Fecha</label>
                             <input type="date" name="fecha" class="form-control w-full border rounded px-3 py-2" required>
                         </div>
+
+
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-6 w-full md:w-auto bg-blue-500 text-white font-bold py-2 px-4 rounded">
@@ -74,6 +81,7 @@
                                 <th class="py-2 px-4 border text-left">Monto</th>
                                 <th class="py-2 px-4 border text-left">Debe</th>
                                 <th class="py-2 px-4 border text-left">Haber</th>
+                                <th class="py-3 px-4 border text-left">Descripción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,14 +93,28 @@
                                     <td class="py-2 px-4 border">{{ number_format($asiento->monto, 2) }}</td>
                                     <td class="py-2 px-4 border">{{ number_format($asiento->debe, 2) }}</td>
                                     <td class="py-2 px-4 border">{{ number_format($asiento->haber, 2) }}</td>
+                                    <td class="py-3 px-4 border">{{ $asiento->descripcion }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 @endif
             </div>
+
+            <div class="flex justify-center mt-8 space-x-4">
+                <a href="{{ route('detalles_balance_copia.index', ['empresa_id' => $empresa->id]) }}"
+                   class="bg-blue-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                    Ver Detalles de Balance Copia
+                </a>
+                <a href="{{ route('libro_diario.index', ['empresa_id' => $empresa->id]) }}"
+                   class="bg-blue-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                    Ver Libro Diario
+                </a>
+            </div>
         </div>
     </div>
+
+
 
     <!-- Script para mostrar la alerta de éxito -->
     @if(session('success'))
