@@ -13,6 +13,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\BackupController;      //controlador del backup
 use App\Http\Controllers\AsientoController;
+use App\Http\Controllers\EstadoResultadosController;
+
 
 
 Route::get('/', function () {
@@ -130,6 +132,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/detalles-balance-copia/{empresa_id}', [AsientoController::class, 'mostrarDetallesBalanceCopia'])->name('detalles_balance_copia.index');
 
     Route::get('/libro-diario/{empresa_id}', [AsientoController::class, 'libroDiario'])->name('libro_diario.index');
+
+
+
+    //ruta para estado de resultado: 
+    Route::get('/estado-resultados', [EstadoResultadosController::class, 'index'])->name('estado_resultados.index');
 
 
 });
