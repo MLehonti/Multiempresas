@@ -55,19 +55,40 @@ class AsientoController extends Controller
 
 
 
-
     public function create($empresa_id)
     {
         $empresa = Empresa::findOrFail($empresa_id);
         $cuentas = $empresa->planCuenta->detalles->pluck('cuenta');
-
+    
         // Obtener los asientos contables de la empresa
         $asientos = Asiento::where('empresa_id', $empresa_id)
             ->orderBy('fecha', 'desc') // Ordenar por fecha (de más reciente a más antiguo)
             ->get();
-
-        return view('asientos.create', compact('empresa', 'cuentas', 'asientos'));
+    
+        // Obtener el código máximo actual para cada cuenta en los asientos contables
+        $ultimoCodigoPorCuenta = [];
+        foreach ($cuentas as $cuenta) {
+            $ultimoAsiento = Asiento::where('cuenta_origen_id', $cuenta->id)
+                                    ->orWhere('cuenta_destino_id', $cuenta->id)
+                                    ->orderBy('created_at', 'desc')
+                                    ->first();
+    
+            // Si hay un asiento previo, obtenemos el código y sumamos 1
+            if ($ultimoAsiento) {
+                $codigoParts = explode('.', $ultimoAsiento->codigo);
+                $ultimoNumero = (int) end($codigoParts);
+                $nuevoCodigo = implode('.', array_slice($codigoParts, 0, -1)) . '.' . ($ultimoNumero + 1);
+            } else {
+                // Si no existe un asiento, el primer código es el código de la cuenta seguido de ".1"
+                $nuevoCodigo = $cuenta->codigo . '.1';
+            }
+    
+            $ultimoCodigoPorCuenta[$cuenta->id] = $nuevoCodigo;
+        }
+    
+        return view('asientos.create', compact('empresa', 'cuentas', 'asientos', 'ultimoCodigoPorCuenta'));
     }
+    
 
 
 
