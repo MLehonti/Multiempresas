@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivoFijoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmpresaController;
@@ -32,6 +33,8 @@ Route::get('/plan-cuentas/export/excel', [PlanCuentasController::class, 'exportE
 
 
 Route::get('/plan-cuentas/export-pdf', [PlanCuentasController::class, 'exportPdf'])->name('plan-cuentas.export.pdf');
+
+Route::get('/libro-diario/exportar-excel/{empresa_id}', [AsientoController::class, 'exportarExcel'])->name('libro_diario.exportarExcel');
 
 
 
@@ -135,10 +138,14 @@ Route::middleware('auth')->group(function () {
 
 
 
-    //ruta para estado de resultado: 
+    //ruta para estado de resultado:
     Route::get('/estado-resultados', [EstadoResultadosController::class, 'index'])->name('estado_resultados.index');
+    Route::get('/estado-resultados/exportar-excel', [EstadoResultadosController::class, 'exportarExcel'])->name('estado_resultados.exportarExcel');
 
+    Route::get('/depreciaciones', [ActivoFijoController::class, 'index'])->name('activo_fijo.index');
 
+    Route::post('/cuentas/{cuentaId}/depreciacion', [ActivoFijoController::class, 'storeDepreciacion'])->name('depreciacion.store');
+    Route::get('depreciacioness', [ActivoFijoController::class, 'show'])->name('depreciacion.show');
 });
 
 

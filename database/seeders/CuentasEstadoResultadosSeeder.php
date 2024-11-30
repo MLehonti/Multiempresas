@@ -16,21 +16,21 @@ class CuentasEstadoResultadosSeeder extends Seeder
         // Lista de cuentas para el Estado de Resultados
         $cuentasEstadoResultados = [
             // Ingresos
-            ['nombre' => 'Ventas', 'tipo' => 'ingreso'],
-            ['nombre' => 'Ingresos Financieros', 'tipo' => 'ingreso'],
-            ['nombre' => 'Ingresos Extraordinarios', 'tipo' => 'ingreso'],
+            ['nombre' => 'Ventas', 'tipo' => 'activo_corriente'],
+            ['nombre' => 'Ingresos Financieros', 'tipo' => 'activo_corriente'],
+            ['nombre' => 'Ingresos Extraordinarios', 'tipo' => 'activo_corriente'],
 
             // Costos de Ventas
-            ['nombre' => 'Costo de Ventas', 'tipo' => 'costo_ventas'],
+            ['nombre' => 'Costo de Ventas', 'tipo' => 'activo_corriente'],
 
             // Gastos Operativos
-            ['nombre' => 'Gastos de Administración', 'tipo' => 'gasto_operativo'],
-            ['nombre' => 'Gastos de Ventas', 'tipo' => 'gasto_operativo'],
-            ['nombre' => 'Gastos Financieros', 'tipo' => 'gasto_financiero'],
-            ['nombre' => 'Gastos Extraordinarios', 'tipo' => 'gasto_extraordinario'],
+            ['nombre' => 'Gastos de Administración', 'tipo' => 'activo_corriente'],
+            ['nombre' => 'Gastos de Ventas', 'tipo' => 'activo_corriente'],
+            ['nombre' => 'Gastos Financieros', 'tipo' => 'activo_corriente'],
+            ['nombre' => 'Gastos Extraordinarios', 'tipo' => 'activo_corriente'],
 
             // Impuestos sobre la Renta
-            ['nombre' => 'Impuesto sobre la Renta', 'tipo' => 'impuesto_renta'],
+            ['nombre' => 'Impuesto sobre la Renta', 'tipo' => 'activo_corriente'],
         ];
 
         // Iterar sobre cada cuenta y crearla solo si no existe
@@ -38,8 +38,8 @@ class CuentasEstadoResultadosSeeder extends Seeder
             DB::table('cuentas')->updateOrInsert(
                 ['nombre' => $cuenta['nombre']], // Condición para verificar si ya existe
                 [
-                    'tipo' => $cuenta['tipo'], 
-                    'created_at' => Carbon::now(), 
+                    'tipo' => $cuenta['tipo'],
+                    'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]
             );

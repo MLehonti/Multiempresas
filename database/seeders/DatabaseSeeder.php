@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             RolyPermisos::class,
             RubrosTableSeeder::class,
-            CuentasSeeder::class
-
+            CuentasSeeder::class,
+            CuentasEstadoResultadosSeeder::class
         ]);
 
 

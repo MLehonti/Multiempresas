@@ -15,4 +15,9 @@ class Cuenta extends Model
     {
         return $this->hasMany(DetalleBalance::class);
     }
+
+    public function depreciaciones()
+{
+    return $this->belongsToMany(Depreciacion::class, 'cuenta_depreciacion');
+}
 }

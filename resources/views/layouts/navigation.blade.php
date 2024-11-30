@@ -9,7 +9,7 @@
                         <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
                     </a>
                 </div>
-                
+
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex items-center"> <!-- Añadido items-center -->
                     <!-- Enlace a Dashboard -->
@@ -47,6 +47,8 @@
                                 </button>
                             </x-slot>
 
+
+
                             <x-slot name="content">
                                 <!-- Opciones dentro del submenú Recursos -->
                                 <x-dropdown-link :href="route('plan-cuentas.index', ['empresa_id' => $empresa->id])">
@@ -55,7 +57,14 @@
                                 <x-dropdown-link :href="route('balance.show', ['empresa_id' => $empresa->id])">
                                     {{ __('Ver Balance de Apertura') }}
                                 </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('estado_resultados.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Estado Resultado') }}
+                                </x-dropdown-link>
                             </x-slot>
+
+
+
                         </x-dropdown>
                     @endif
 

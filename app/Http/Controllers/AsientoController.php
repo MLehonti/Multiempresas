@@ -9,10 +9,71 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Empresa;
 use App\Models\DetalleBalanceCopia;
 use Illuminate\Support\Facades\Log; // Asegúrate de importar Log
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Carbon\Carbon;
 
 class AsientoController extends Controller
 {
+
+    public function exportarExcel(Request $request, $empresa_id)
+{
+    // Filtrar los asientos por fecha
+    $asientos = Asiento::where('empresa_id', $empresa_id)
+        ->when($request->fecha_inicio, function ($query) use ($request) {
+            $query->whereDate('fecha', '>=', $request->fecha_inicio);
+        })
+        ->when($request->fecha_fin, function ($query) use ($request) {
+            $query->whereDate('fecha', '<=', $request->fecha_fin);
+        })
+        ->get()
+        ->groupBy('fecha');
+
+    // Crear el archivo Excel
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle("Libro Diario");
+
+    // Encabezados
+    $sheet->setCellValue('A1', 'Fecha');
+    $sheet->setCellValue('B1', 'Cuenta Origen');
+    $sheet->setCellValue('C1', 'Cuenta Destino');
+    $sheet->setCellValue('D1', 'Monto');
+    $sheet->setCellValue('E1', 'Debe');
+    $sheet->setCellValue('F1', 'Haber');
+    $sheet->setCellValue('G1', 'Descripción');
+
+    // Rellenar datos
+    $row = 2;
+    foreach ($asientos as $fecha => $asientosPorFecha) {
+        $sheet->setCellValue("A$row", Carbon::parse($fecha)->format('d/m/Y'));
+
+        foreach ($asientosPorFecha as $asiento) {
+            $sheet->setCellValue("B$row", $asiento->cuentaOrigen->nombre);
+            $sheet->setCellValue("C$row", $asiento->cuentaDestino->nombre);
+            $sheet->setCellValue("D$row", number_format($asiento->monto, 2));
+            $sheet->setCellValue("E$row", number_format($asiento->debe, 2));
+            $sheet->setCellValue("F$row", number_format($asiento->haber, 2));
+            $sheet->setCellValue("G$row", $asiento->descripcion);
+            $row++;
+        }
+
+        $row++; // Agrega una fila en blanco entre fechas
+    }
+
+    // Descargar el archivo Excel
+    $writer = new Xlsx($spreadsheet);
+    $fileName = 'Libro_Diario_Mayor.xlsx';
+    $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    $writer->save($temp_file);
+
+    return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
+}
+
+
+
+
+
     // public function create($empresa_id)
     // {
     //     $empresa = Empresa::findOrFail($empresa_id);
@@ -59,12 +120,12 @@ class AsientoController extends Controller
     {
         $empresa = Empresa::findOrFail($empresa_id);
         $cuentas = $empresa->planCuenta->detalles->pluck('cuenta');
-    
+
         // Obtener los asientos contables de la empresa
         $asientos = Asiento::where('empresa_id', $empresa_id)
             ->orderBy('fecha', 'desc') // Ordenar por fecha (de más reciente a más antiguo)
             ->get();
-    
+
         // Obtener el código máximo actual para cada cuenta en los asientos contables
         $ultimoCodigoPorCuenta = [];
         foreach ($cuentas as $cuenta) {
@@ -72,7 +133,7 @@ class AsientoController extends Controller
                                     ->orWhere('cuenta_destino_id', $cuenta->id)
                                     ->orderBy('created_at', 'desc')
                                     ->first();
-    
+
             // Si hay un asiento previo, obtenemos el código y sumamos 1
             if ($ultimoAsiento) {
                 $codigoParts = explode('.', $ultimoAsiento->codigo);
@@ -82,13 +143,13 @@ class AsientoController extends Controller
                 // Si no existe un asiento, el primer código es el código de la cuenta seguido de ".1"
                 $nuevoCodigo = $cuenta->codigo . '.1';
             }
-    
+
             $ultimoCodigoPorCuenta[$cuenta->id] = $nuevoCodigo;
         }
-    
+
         return view('asientos.create', compact('empresa', 'cuentas', 'asientos', 'ultimoCodigoPorCuenta'));
     }
-    
+
 
 
 

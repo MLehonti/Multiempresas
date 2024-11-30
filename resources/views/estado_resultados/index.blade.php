@@ -9,7 +9,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                 <h3 class="text-xl font-bold mb-4 text-center">Estado de Resultados</h3>
-
+                <div class="flex justify-end mb-4">
+                    <a href="{{ route('estado_resultados.exportarExcel') }}"
+                       class="bg-blue-500 text-white font-bold py-2 px-4 rounded shadow-lg">
+                        Exportar a Excel
+                    </a>
+                </div>
                 <table class="min-w-full bg-white border w-full">
                     <thead>
                         <tr>

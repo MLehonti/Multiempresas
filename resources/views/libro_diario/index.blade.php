@@ -26,8 +26,17 @@
                                 Filtrar
                             </button>
                         </div>
+
+                        <a href="{{ route('libro_diario.exportarExcel', ['empresa_id' => $empresa->id, 'fecha_inicio' => request('fecha_inicio'), 'fecha_fin' => request('fecha_fin')]) }}"
+                            class="bg-blue-500 text-white font-bold py-2 px-4 rounded shadow-lg">
+                             Exportar a Excel
+                         </a>
                     </div>
+
+
                 </form>
+
+
 
                 @php
                     // Filtrar los asientos por fecha en la vista
