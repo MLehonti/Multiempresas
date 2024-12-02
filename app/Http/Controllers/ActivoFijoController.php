@@ -52,52 +52,66 @@ class ActivoFijoController extends Controller
 
 
     public function aplicarDepreciacion()
-    {
-        // Obtener todas las cuentas y sus depreciaciones asociadas
-        $cuentasConDepreciaciones = Cuenta::with('depreciaciones')->get();
+{
+    // Obtener las depreciaciones y las cuentas asociadas
+    $depreciaciones = Depreciacion::with('cuentas')->get();
 
-        // Recorrer todas las cuentas y sus depreciaciones
-        foreach ($cuentasConDepreciaciones as $cuenta) {
-            // Verificar si la cuenta tiene depreciaciones asociadas
-            if ($cuenta->depreciaciones->isEmpty()) {
-                Log::info("No hay depreciaciones asociadas a la cuenta: " . $cuenta->id);
-                continue; // Si no tiene depreciaciones, continuar con la siguiente cuenta
+    foreach ($depreciaciones as $depreciacion) {
+        // Obtener el porcentaje de depreciación
+        $porcentaje_depreciacion = $depreciacion->porcentaje_depreciacion / 100;
+
+        // Recorrer las cuentas asociadas a la depreciación
+        foreach ($depreciacion->cuentas as $cuenta) {
+            // Buscar todos los registros en detalle_balance_copia para la cuenta actual
+            $detallesBalance = DetalleBalanceCopia::where('cuenta_id', $cuenta->id)->get();
+
+            // Verificar si existen registros
+            if ($detallesBalance->isEmpty()) {
+                Log::info("No se encontraron registros en detalle_balance_copia para Cuenta ID: {$cuenta->id}");
+                continue; // Pasar a la siguiente cuenta si no hay registros
             }
 
-            // Recorrer todas las depreciaciones asociadas a la cuenta
-            foreach ($cuenta->depreciaciones as $depreciacion) {
-                // Buscar los registros en detalle_balance_copia que coincidan con el cuenta_id
-                $detalleBalanceCopia = DetalleBalanceCopia::where('cuenta_id', $cuenta->id)->get();
+            // Recorrer todos los registros encontrados
+            foreach ($detallesBalance as $detalleBalance) {
+                // Obtener el valor actual de 'debe'
+                $valor_debe = $detalleBalance->debe;
 
-                // Verificar si encontramos registros de detalle_balance_copia
-                if ($detalleBalanceCopia->isEmpty()) {
-                    Log::info("No hay registros en detalle_balance_copia para la cuenta: " . $cuenta->id);
-                    continue; // Si no hay registros, continuar con la siguiente depreciación
-                }
+                // Calcular la depreciación
+                $depreciacion_aplicada = $valor_debe * $porcentaje_depreciacion;
 
-                // Recorrer los registros de detalle_balance_copia
-                foreach ($detalleBalanceCopia as $detalle) {
-                    // Obtener el valor actual del 'debe'
-                    $montoOriginal = $detalle->debe;
+                // Calcular el nuevo valor de 'debe' después de aplicar la depreciación
+                $nuevo_valor_debe = $valor_debe - $depreciacion_aplicada;
 
-                    // Calcular la depreciación: montoOriginal * porcentaje_depreciacion / 100
-                    $depreciacionAplicada = $montoOriginal * ($depreciacion->porcentaje_depreciacion / 100);
+                // Actualizar el valor de 'debe' en la tabla detalle_balance_copia
+                $detalleBalance->debe = $nuevo_valor_debe;
+                $detalleBalance->save();
 
-                    // Calcular el valor depreciado
-                    $valorDepreciado = $montoOriginal - $depreciacionAplicada;
-
-                    // Actualizar el valor del 'debe' en detalle_balance_copia con el valor depreciado
-                    $detalle->debe = $valorDepreciado;
-                    $detalle->save();
-
-                    // Log de lo que ocurrió
-                    Log::info("Depreciación aplicada a cuenta_id: " . $cuenta->id . " con porcentaje de: " . $depreciacion->porcentaje_depreciacion . "%, nuevo valor de debe: " . $valorDepreciado);
-                }
+                // Log para verificar el resultado
+                Log::info("Depreciación aplicada: {$depreciacion->nombre}, Cuenta ID: {$cuenta->id}, Valor Original: {$valor_debe}, Depreciación Aplicada: {$depreciacion_aplicada}, Nuevo Valor: {$nuevo_valor_debe}");
             }
         }
-
-        return redirect()->route('activo_fijo.index')->with('success', 'Depreciación aplicada correctamente');
     }
+
+    return redirect()->route('activo_fijo.index')->with('success', 'Depreciación aplicada correctamente');
+}
+
+
+
+public function eliminarDepreciacion($id)
+{
+    // Buscar la depreciación
+    $depreciacion = Depreciacion::findOrFail($id);
+
+    // Eliminar la relación de la depreciación con las cuentas
+    $depreciacion->cuentas()->detach();
+
+    // Eliminar la depreciación
+    $depreciacion->delete();
+
+    // Redirigir de nuevo con un mensaje de éxito
+    return redirect()->route('activo_fijo.index')->with('success', 'Depreciación eliminada correctamente.');
+}
+
 
 
 }
