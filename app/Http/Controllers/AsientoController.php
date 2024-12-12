@@ -8,7 +8,7 @@ use App\Models\DetalleBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Empresa;
 use App\Models\DetalleBalanceCopia;
-use Illuminate\Support\Facades\Log; // Asegúrate de importar Log
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Carbon\Carbon;
@@ -281,4 +281,58 @@ class AsientoController extends Controller
 
         Log::info('Actualización de balance de apertura copia completada');
     }
+
+
+
+
+    public function calcularFlujoCaja($empresa_id)
+    {
+        $asientos = Asiento::where('empresa_id', $empresa_id)->get();
+    
+        $actividades = [
+            'operacion' => [33, 34, 35, 36, 37, 38, 39, 40, 41], 
+            'inversion' => [8, 9, 10, 11, 12, 14], 
+            'financiamiento' => [19, 20, 21, 22, 23, 24, 25, 26, 27, 28], 
+        ];
+    
+        $resultados = [
+            'operacion' => ['entradas' => 0, 'salidas' => 0, 'neto' => 0],
+            'inversion' => ['entradas' => 0, 'salidas' => 0, 'neto' => 0],
+            'financiamiento' => ['entradas' => 0, 'salidas' => 0, 'neto' => 0],
+        ];
+    
+        // Procesar cada asiento
+        foreach ($asientos as $asiento) {
+            foreach ($actividades as $tipo => $cuentas) {
+                // Entradas: Sumar el monto en "debe" cuando la cuenta de destino pertenece a la actividad
+                if (in_array($asiento->cuenta_destino_id, $cuentas)) {
+                    $resultados[$tipo]['entradas'] += $asiento->haber;
+                }
+    
+                // Salidas: Sumar el monto en "haber" cuando la cuenta de origen pertenece a la actividad
+                if (in_array($asiento->cuenta_origen_id, $cuentas)) {
+                    $resultados[$tipo]['salidas'] += $asiento->debe;
+                }
+            }
+        }
+    
+        // Calcular flujo neto por actividad
+        foreach ($resultados as $tipo => &$resultado) {
+            $resultado['neto'] = $resultado['salidas'] - $resultado['entradas'];
+        }
+    
+        // Calcular el total general
+        $totalGeneral = [
+            'entradas' => array_sum(array_column($resultados, 'entradas')),
+            'salidas' => array_sum(array_column($resultados, 'salidas')),
+            'neto' => array_sum(array_column($resultados, 'neto')),
+        ];
+    
+        return view('flujo_caja.index', compact('resultados', 'totalGeneral', 'empresa_id'));
+    }
+    
+    
+
+    
+
 }

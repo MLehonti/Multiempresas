@@ -61,6 +61,122 @@
                                 <x-dropdown-link :href="route('estado_resultados.index', ['empresa_id' => $empresa->id])">
                                     {{ __('Ver Estado Resultado') }}
                                 </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('detalles_balance_copia.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Balance General') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('activo_fijo.index')">
+                                    {{ __('Crear Depreciacion') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('depreciacion.show')">
+                                    {{ __('Ver Depreciaciones Existentes') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('flujo_caja.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Flujo de Caja') }}
+                                </x-dropdown-link>
+
+                                
+
+
+
+                            </x-slot>
+
+
+
+                        </x-dropdown>
+                    @endif
+
+
+                    @if ($empresa)
+                        <!-- Dropdown de Recursos -->
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                    <div>{{ __('Registros Contables') }}</div>
+                                    <div class="ml-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+
+
+
+                            <x-slot name="content">
+                                <!-- Opciones dentro del submenú Recursos -->
+                                
+
+                                <x-dropdown-link :href="route('activo_fijo.index')">
+                                    {{ __('Crear Depreciacion') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('depreciacion.show')">
+                                    {{ __('Ver Depreciaciones Existentes') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('libro_diario.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Libro Diario y Mayor') }}
+                                </x-dropdown-link>
+
+                                
+
+
+
+                            </x-slot>
+
+
+
+                        </x-dropdown>
+                    @endif
+
+
+
+
+
+
+
+
+                    
+                    @if ($empresa)
+                        <!-- Dropdown de Recursos -->
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                    <div>{{ __('Cuentas y Balances') }}</div>
+                                    <div class="ml-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+
+
+
+                            <x-slot name="content">
+                                <!-- Opciones dentro del submenú Recursos -->
+                                
+                                <x-dropdown-link :href="route('plan-cuentas.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Plan de Cuentas') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('balance.show', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Balance de Apertura') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('estado_resultados.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Estado Resultado') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('detalles_balance_copia.index', ['empresa_id' => $empresa->id])">
+                                    {{ __('Ver Balance General') }}
+                                </x-dropdown-link>
+
+                                
+
+
+
                             </x-slot>
 
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Asiento extends Model
 {
     use HasFactory;
-    protected $table = 'asientos'; // Asegúrate de que coincide con el nombre de la tabla en la base de datos
+    protected $table = 'asientos';
 
 
     protected $fillable = ['empresa_id', 'cuenta_origen_id', 'cuenta_destino_id', 'monto', 'debe', 'haber', 'fecha'];

@@ -147,8 +147,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/cuentas/{cuentaId}/depreciacion', [ActivoFijoController::class, 'storeDepreciacion'])->name('depreciacion.store');
     Route::get('depreciacioness', [ActivoFijoController::class, 'show'])->name('depreciacion.show');
     Route::get('/aplicar-depreciacion', [ActivoFijoController::class, 'aplicarDepreciacion'])->name('aplicar.depreciacion');
-// Ruta para eliminar la depreciación
-Route::delete('/depreciacion/{id}', [ActivoFijoController::class, 'eliminarDepreciacion'])->name('eliminar.depreciacion');
+    // Ruta para eliminar la depreciación
+    Route::delete('/depreciacion/{id}', [ActivoFijoController::class, 'eliminarDepreciacion'])->name('eliminar.depreciacion');
+
+    //RUTA PARA VER EL FLUJO DE CAJA
+    Route::get('/flujo-caja/{empresa_id}', [AsientoController::class, 'calcularFlujoCaja'])->name('flujo_caja.index');
 
 });
 
